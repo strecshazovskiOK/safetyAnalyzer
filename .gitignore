@@ -27,7 +27,6 @@ env/
 ENV/
 env.bak/
 venv.bak/
-Scripts/
 
 # IDE
 .vscode/
