@@ -14,25 +14,42 @@ A comprehensive aviation safety report analysis tool that uses AI-powered analys
 - **Export Capabilities**: Export reports as PDF or Excel/CSV
 - **Modern GUI**: Clean, dark-themed interface built with tkinter
 
-## Installation
+## 🚀 Quick Start
 
-1. Clone this repository:
-```bash
-git clone https://github.com/strecshazovskiOK/safetyAnalyzer.git
-cd safetyAnalyzer
+### 🌐 Web Version (Recommended)
+**No installation required!** Use the web version deployed on Vercel:
+- Visit: [Your Vercel URL]
+- Upload PDF files directly in your browser
+- Works on any device with internet connection
+
+### 🖥️ Desktop Version
+**Download and run locally** for offline use:
+
+**Windows:**
+1. Download ZIP from GitHub
+2. Extract files
+3. Double-click `install.bat`
+4. Double-click `run.bat`
+
+**Mac/Linux:**
+1. Download ZIP from GitHub
+2. Extract files
+3. Run: `chmod +x install.sh run.sh`
+4. Run: `./install.sh`
+5. Run: `./run.sh`
+
+### 📋 Requirements
+- Python 3.8+ installed
+- OpenAI API key
+- Internet connection for AI analysis
+
+### 🔧 API Key Setup
+Create `config.py` file:
+```python
+API_KEY = "your-openai-api-key-here"
 ```
 
-2. Install Python dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Set up your OpenAI API key:
-   - Create a `config.py` file in the project root
-   - Add your OpenAI API key:
-   ```python
-   API_KEY = "your-openai-api-key-here"
-   ```
+📥 **For detailed download instructions, see [DOWNLOAD.md](DOWNLOAD.md)**
 
 ## Usage
 
