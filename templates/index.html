@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Safety Report Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0B1220 0%, #111A2B 100%);
+            color: #E8EEF9;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #4F8FF7, #18C29C);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header p {
+            color: #99A7BD;
+            font-size: 1.1rem;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .card {
+            background: rgba(17, 26, 43, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            border: 1px solid rgba(79, 143, 247, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card h2 {
+            color: #4F8FF7;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #99A7BD;
+            font-weight: 500;
+        }
+        
+        .form-group select,
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid rgba(79, 143, 247, 0.3);
+            border-radius: 8px;
+            background: rgba(14, 23, 48, 0.8);
+            color: #E8EEF9;
+            font-size: 1rem;
+        }
+        
+        .form-group select:focus,
+        .form-group input[type="file"]:focus {
+            outline: none;
+            border-color: #4F8FF7;
+            box-shadow: 0 0 0 3px rgba(79, 143, 247, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #4F8FF7, #3A7AE0);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 143, 247, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #18C29C, #16A085);
+        }
+        
+        .btn-secondary:hover {
+            box-shadow: 0 8px 25px rgba(24, 194, 156, 0.3);
+        }
+        
+        .result-area {
+            grid-column: 1 / -1;
+        }
+        
+        .result-content {
+            background: rgba(14, 23, 48, 0.8);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid rgba(79, 143, 247, 0.2);
+            white-space: pre-wrap;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #99A7BD;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(79, 143, 247, 0.3);
+            border-top: 3px solid #4F8FF7;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .error {
+            background: rgba(231, 76, 60, 0.1);
+            border: 1px solid rgba(231, 76, 60, 0.3);
+            color: #E74C3C;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .success {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            color: #2ECC71;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .classification {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .classification-item {
+            background: rgba(24, 194, 156, 0.1);
+            border: 1px solid rgba(24, 194, 156, 0.3);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .classification-item h4 {
+            color: #18C29C;
+            margin-bottom: 5px;
+        }
+        
+        .classification-item p {
+            color: #E8EEF9;
+            font-weight: 500;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🛡️ Safety Report Analyzer</h1>
+            <p>AI-powered aviation safety report analysis using industry-standard methods</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="card">
+                <h2>📄 Upload & Analyze</h2>
+                <form id="analyzeForm" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label for="file">Select PDF Report</label>
+                        <input type="file" id="file" name="file" accept=".pdf" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="method">Analysis Method</label>
+                        <select id="method" name="method">
+                            <option value="Five Whys">Five Whys</option>
+                            <option value="Fishbone">Fishbone</option>
+                            <option value="Bowtie">Bowtie</option>
+                            <option value="Fault Tree">Fault Tree</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="language">Output Language</label>
+                        <select id="language" name="language">
+                            <option value="English">English</option>
+                            <option value="Français">Français</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="btn" id="analyzeBtn">
+                        ▶️ Run Analysis
+                    </button>
+                </form>
+            </div>
+            
+            <div class="card">
+                <h2>🔧 Auto-Classification</h2>
+                <p style="color: #99A7BD; margin-bottom: 20px;">
+                    Automatically classify incidents according to Transport Canada standards
+                </p>
+                <button type="button" class="btn btn-secondary" id="classifyBtn" disabled>
+                    ❄️ Auto-Classify
+                </button>
+                
+                <div id="classificationResult" class="classification" style="display: none;">
+                    <div class="classification-item">
+                        <h4>Occurrence</h4>
+                        <p id="occurrenceResult">-</p>
+                    </div>
+                    <div class="classification-item">
+                        <h4>Severity</h4>
+                        <p id="severityResult">-</p>
+                    </div>
+                    <div class="classification-item">
+                        <h4>Probability</h4>
+                        <p id="probabilityResult">-</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card result-area">
+            <h2>📊 Analysis Results</h2>
+            <div id="resultContent" class="result-content" style="display: none;">
+                <!-- Results will be displayed here -->
+            </div>
+            <div id="loadingIndicator" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <p>Analyzing report... Please wait</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let currentAnalysisResult = '';
+        
+        document.getElementById('analyzeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData();
+            const fileInput = document.getElementById('file');
+            const method = document.getElementById('method').value;
+            const language = document.getElementById('language').value;
+            
+            if (!fileInput.files[0]) {
+                alert('Please select a PDF file');
+                return;
+            }
+            
+            formData.append('file', fileInput.files[0]);
+            formData.append('method', method);
+            formData.append('language', language);
+            
+            // Show loading
+            document.getElementById('loadingIndicator').style.display = 'block';
+            document.getElementById('resultContent').style.display = 'none';
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('classifyBtn').disabled = true;
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentAnalysisResult = data.result;
+                    document.getElementById('resultContent').textContent = data.result;
+                    document.getElementById('resultContent').style.display = 'block';
+                    document.getElementById('classifyBtn').disabled = false;
+                } else {
+                    showError(data.error || 'Analysis failed');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            } finally {
+                document.getElementById('loadingIndicator').style.display = 'none';
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+        });
+        
+        document.getElementById('classifyBtn').addEventListener('click', async function() {
+            if (!currentAnalysisResult) {
+                alert('Please run an analysis first');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/classify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        text: currentAnalysisResult
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    const classification = data.classification;
+                    document.getElementById('occurrenceResult').textContent = classification.occurrence;
+                    document.getElementById('severityResult').textContent = classification.severity;
+                    document.getElementById('probabilityResult').textContent = classification.probability;
+                    document.getElementById('classificationResult').style.display = 'grid';
+                } else {
+                    showError(data.error || 'Classification failed');
+                }
+            } catch (error) {
+                showError('Network error: ' + error.message);
+            }
+        });
+        
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            const resultArea = document.querySelector('.result-area');
+            resultArea.appendChild(errorDiv);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
