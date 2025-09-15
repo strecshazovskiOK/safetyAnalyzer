@@ -176,6 +176,17 @@ def analyze_report():
         if not file.filename.lower().endswith('.pdf'):
             return jsonify({'error': 'Only PDF files are allowed'}), 400
         
+        # Check file size (16MB limit)
+        file.seek(0, 2)  # Seek to end
+        file_size = file.tell()
+        file.seek(0)  # Reset to beginning
+        
+        if file_size > 16 * 1024 * 1024:  # 16MB
+            return jsonify({'error': 'File too large. Maximum size is 16MB.'}), 400
+        
+        if file_size == 0:
+            return jsonify({'error': 'File is empty'}), 400
+        
         method = request.form.get('method', 'Five Whys')
         language = request.form.get('language', 'English')
         
@@ -189,7 +200,10 @@ def analyze_report():
             text = extract_text_from_pdf(temp_path)
             
             if not text.strip():
-                return jsonify({'error': 'No text found in PDF. Please check if the PDF contains readable text.'}), 400
+                return jsonify({'error': 'No text found in PDF. Please check if the PDF contains readable text or is not password-protected.'}), 400
+            
+            if len(text.strip()) < 50:
+                return jsonify({'error': 'PDF contains very little text. Please ensure the PDF has sufficient content for analysis.'}), 400
             
             # Analyze with GPT
             result = analyze_report_with_gpt(text, method, language)

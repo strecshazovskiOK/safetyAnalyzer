@@ -86,6 +86,50 @@
             font-size: 1rem;
         }
         
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        
+        .file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: -9999px;
+            opacity: 0;
+        }
+        
+        .file-input-label {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 2px dashed rgba(79, 143, 247, 0.3);
+            border-radius: 8px;
+            background: rgba(14, 23, 48, 0.8);
+            color: #E8EEF9;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        
+        .file-input-label:hover {
+            border-color: #4F8FF7;
+            background: rgba(79, 143, 247, 0.1);
+        }
+        
+        .file-input-label.has-file {
+            border-color: #18C29C;
+            background: rgba(24, 194, 156, 0.1);
+            color: #18C29C;
+        }
+        
+        .file-name {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #99A7BD;
+            word-break: break-all;
+        }
+        
         .form-group select:focus,
         .form-group input[type="file"]:focus {
             outline: none;
@@ -234,7 +278,13 @@
                 <form id="analyzeForm" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="file">Select PDF Report</label>
-                        <input type="file" id="file" name="file" accept=".pdf" required>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="file" name="file" accept=".pdf" required>
+                            <label for="file" class="file-input-label" id="fileLabel">
+                                📄 Click to select PDF file or drag & drop
+                            </label>
+                            <div class="file-name" id="fileName"></div>
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -301,6 +351,52 @@
     
     <script>
         let currentAnalysisResult = '';
+        
+        // File input handling
+        const fileInput = document.getElementById('file');
+        const fileLabel = document.getElementById('fileLabel');
+        const fileName = document.getElementById('fileName');
+        
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                fileLabel.textContent = '✅ PDF file selected';
+                fileLabel.classList.add('has-file');
+                fileName.textContent = `Selected: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+            } else {
+                fileLabel.textContent = '📄 Click to select PDF file or drag & drop';
+                fileLabel.classList.remove('has-file');
+                fileName.textContent = '';
+            }
+        });
+        
+        // Drag and drop functionality
+        const fileWrapper = document.querySelector('.file-input-wrapper');
+        
+        fileWrapper.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            fileLabel.style.borderColor = '#4F8FF7';
+            fileLabel.style.background = 'rgba(79, 143, 247, 0.2)';
+        });
+        
+        fileWrapper.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            fileLabel.style.borderColor = 'rgba(79, 143, 247, 0.3)';
+            fileLabel.style.background = 'rgba(14, 23, 48, 0.8)';
+        });
+        
+        fileWrapper.addEventListener('drop', function(e) {
+            e.preventDefault();
+            const files = e.dataTransfer.files;
+            if (files.length > 0 && files[0].type === 'application/pdf') {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+            } else {
+                alert('Please select a PDF file');
+            }
+            fileLabel.style.borderColor = 'rgba(79, 143, 247, 0.3)';
+            fileLabel.style.background = 'rgba(14, 23, 48, 0.8)';
+        });
         
         document.getElementById('analyzeForm').addEventListener('submit', async function(e) {
             e.preventDefault();
