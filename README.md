@@ -1,68 +1,63 @@
-# Safety Report Analyzer
+# 🛡️ Safety Report Analyzer
 
-A comprehensive aviation safety report analysis tool that uses AI-powered analysis methods to process PDF safety reports and generate structured recommendations.
+A modern web application for aviation safety report analysis using AI-powered methods to process PDF safety reports and generate structured recommendations.
 
-## Features
+## ✨ Features
 
-- **Multiple Analysis Methods**: Five Whys, Fishbone, Bowtie, and Fault Tree analysis
-- **AI-Powered Analysis**: Uses OpenAI GPT-4 for intelligent report analysis
-- **Aviation-Specific**: Aligned with ICAO and Transport Canada standards
-- **Multi-Language Support**: English and French output
-- **Auto-Classification**: Automatic occurrence classification using Transport Canada CADORS/SMS standards
-- **Similar Case Search**: Find similar reports using vector similarity search
-- **Local Database**: SQLite database for storing and retrieving analysis results
-- **Export Capabilities**: Export reports as PDF or Excel/CSV
-- **Modern GUI**: Clean, dark-themed interface built with tkinter
+- **🌐 Web-Based**: Access from any device with a browser
+- **🤖 AI-Powered Analysis**: Uses OpenAI GPT-4 for intelligent report analysis
+- **📊 Multiple Analysis Methods**: Five Whys, Fishbone, Bowtie, and Fault Tree analysis
+- **✈️ Aviation-Specific**: Aligned with ICAO and Transport Canada standards
+- **🌍 Multi-Language Support**: English and French output
+- **🏷️ Auto-Classification**: Automatic occurrence classification using Transport Canada CADORS/SMS standards
+- **🔍 Similar Case Search**: Find similar reports using vector similarity search
+- **💾 Database Storage**: SQLite database for storing and retrieving analysis results
+- **🎨 Modern UI**: Clean, responsive design with dark theme
 
 ## 🚀 Quick Start
 
-### 🌐 Web Version (Recommended)
-**No installation required!** Use the web version deployed on Vercel:
-- Visit: [Your Vercel URL]
-- Upload PDF files directly in your browser
-- Works on any device with internet connection
+### 🌐 Live Web Application
+**No installation required!** Simply visit the deployed application:
+- **Visit**: [Your Vercel URL]
+- **Upload PDF** files directly in your browser
+- **Select analysis method** and language
+- **Get instant AI-powered results**
 
-### 🖥️ Desktop Version
-**Download and run locally** for offline use:
+### 🛠️ Local Development
+**For developers who want to run locally:**
 
-**Windows:**
-1. Download ZIP from GitHub
-2. Extract files
-3. Double-click `install.bat`
-4. Double-click `run.bat`
-
-**Mac/Linux:**
-1. Download ZIP from GitHub
-2. Extract files
-3. Run: `chmod +x install.sh run.sh`
-4. Run: `./install.sh`
-5. Run: `./run.sh`
-
-### 📋 Requirements
-- Python 3.8+ installed
-- OpenAI API key
-- Internet connection for AI analysis
-
-### 🔧 API Key Setup
-Create `config.py` file:
-```python
-API_KEY = "your-openai-api-key-here"
-```
-
-📥 **For detailed download instructions, see [DOWNLOAD.md](DOWNLOAD.md)**
-
-## Usage
-
-1. Run the application:
+1. **Clone the repository:**
 ```bash
-python gui.py
+git clone https://github.com/strecshazovskiOK/safetyAnalyzer.git
+cd safetyAnalyzer
 ```
 
-2. Select a PDF safety report file
-3. Choose your analysis method and output language
-4. Click "Run Analysis" to generate the report
-5. Use the feedback system to refine the analysis
-6. Export the final report in your preferred format
+2. **Install dependencies:**
+```bash
+pip install -r requirements.txt
+```
+
+3. **Set environment variable:**
+```bash
+export OPENAI_API_KEY="your-openai-api-key-here"
+```
+
+4. **Run the application:**
+```bash
+python app.py
+```
+
+5. **Open browser:** Visit `http://localhost:5000`
+
+## 📖 How to Use
+
+1. **Visit the web application** (Vercel URL)
+2. **Upload a PDF** safety report file
+3. **Select analysis method** (Five Whys, Fishbone, Bowtie, or Fault Tree)
+4. **Choose output language** (English or French)
+5. **Click "Run Analysis"** to generate the AI-powered report
+6. **Use auto-classification** to categorize the incident
+7. **View results** with structured recommendations
 
 ## Analysis Methods
 
@@ -85,11 +80,13 @@ The tool automatically classifies incidents according to Transport Canada standa
 - Version control for report updates
 - Export capabilities for data analysis
 
-## Dependencies
+## 📦 Dependencies
 
-- **Core**: OpenAI API, PyMuPDF (PDF processing), NumPy
-- **Optional**: ReportLab (PDF export), Pandas (Excel export)
-- **Built-in**: tkinter (GUI), sqlite3 (database)
+- **Flask**: Web framework
+- **OpenAI**: AI analysis engine
+- **PyMuPDF**: PDF text extraction
+- **NumPy**: Vector operations for similarity search
+- **SQLite3**: Database storage (built-in)
 
 ## Contributing
 

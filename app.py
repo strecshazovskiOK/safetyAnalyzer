@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_file
+from flask import Flask, render_template, request, jsonify
 import os
 import tempfile
 import json
@@ -8,22 +8,16 @@ import openai
 import datetime
 import sqlite3
 import numpy as np
-import threading
 import re
 
-# Import from config
-try:
-    from config import API_KEY
-    openai.api_key = API_KEY
-except ImportError:
-    # For Vercel deployment, use environment variable
-    openai.api_key = os.environ.get('OPENAI_API_KEY', '')
+# OpenAI API key from environment variable (Vercel)
+openai.api_key = os.environ.get('OPENAI_API_KEY', '')
 
 app = Flask(__name__)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
-# Database setup
-DB_PATH = os.path.join(os.path.dirname(__file__), "safety_reports.db")
+# Database setup (using temporary database for web app)
+DB_PATH = os.path.join(tempfile.gettempdir(), "safety_reports.db")
 EMBED_MODEL = "text-embedding-3-large"
 
 SEVERITY_OPTIONS = ["Minor", "Moderate", "Major", "Critical"]
@@ -155,12 +149,15 @@ Here is the full report text:
 """
 
 def analyze_report_with_gpt(text, method, out_lang="English", session_id="001"):
-    resp = openai.ChatCompletion.create(
-        model="gpt-4",
-        messages=[{"role":"user","content":build_prompt(text, method, session_id, out_lang, True)}],
-        max_tokens=1200
-    )
-    return resp.choices[0].message.content.strip()
+    try:
+        resp = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=[{"role":"user","content":build_prompt(text, method, session_id, out_lang, True)}],
+            max_tokens=1200
+        )
+        return resp.choices[0].message.content.strip()
+    except Exception as e:
+        return f"Error analyzing report: {str(e)}"
 
 @app.route('/')
 def index():
@@ -191,8 +188,17 @@ def analyze_report():
             # Extract text from PDF
             text = extract_text_from_pdf(temp_path)
             
+            if not text.strip():
+                return jsonify({'error': 'No text found in PDF. Please check if the PDF contains readable text.'}), 400
+            
             # Analyze with GPT
             result = analyze_report_with_gpt(text, method, language)
+            
+            # Save to database
+            try:
+                db_insert_report(filename, method, language, result)
+            except Exception as db_error:
+                print(f"Database error: {db_error}")
             
             return jsonify({
                 'success': True,
@@ -250,6 +256,8 @@ def auto_classify():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+# Initialize database on startup
+db_init()
+
 if __name__ == '__main__':
-    db_init()
     app.run(debug=True)
